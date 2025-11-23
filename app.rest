@@ -22,7 +22,7 @@ POST {{BaseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "{{email}}",
+    "email": "{{email}}}",
     "password": "{{password}}"
 }
 ###
@@ -59,46 +59,215 @@ Content-Type: application/json
 }
 ###
 
-## Todos
+## Cash Flows
 ## ---------------------------------
 
-# @name PostTodo
-POST {{BaseUrl}}/todos
+# @name PostCashFlowIncome
+POST {{BaseUrl}}/cashflows
 Authorization: {{bearerToken}}
 Content-Type: application/json
 
 {
-    "title": "Belajar PBO Malam Minggu",
-    "description": "Mempelajari dasar-dasar PBO untuk pengembangan aplikasi web."
+    "type": "INCOME",
+    "amount": 500000,
+    "description": "Uang saku bulanan",
+    "date": "2025-01-15T10:00:00"
 }
 ###
 
-# @name GetAllTodos
-GET {{BaseUrl}}/todos
+# @name PostCashFlowExpense
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "EXPENSE",
+    "amount": 150000,
+    "description": "Belanja bulanan",
+    "date": "2025-01-16T14:30:00"
+}
+###
+
+# @name GetAllCashFlows
+GET {{BaseUrl}}/cashflows
 Authorization: {{bearerToken}}
 ###
 
-# @name GetAllTodosWithSearch
-GET {{BaseUrl}}/todos?search=Minggu
+# @name GetAllCashFlowsWithSearch
+GET {{BaseUrl}}/cashflows?search=bulanan
 Authorization: {{bearerToken}}
 ###
 
-## Mengambil ID Todo pertama dari response GetAllTodos
-@todoId = {{GetAllTodos.response.body.data.todos[0].id}}
+## Mengambil ID CashFlow pertama dari response GetAllCashFlows
+@cashFlowId = {{GetAllCashFlows.response.body.data.cashflows[0].id}}
 
-# @name PutTodoById
-PUT {{BaseUrl}}/todos/{{todoId}}
+# @name GetCashFlowById
+GET {{BaseUrl}}/cashflows/{{cashFlowId}}
+Authorization: {{bearerToken}}
+###
+
+# @name PutCashFlowById
+PUT {{BaseUrl}}/cashflows/{{cashFlowId}}
 Content-Type: application/json
 Authorization: {{bearerToken}}
 
 {
-    "title": "Belajar Spring Boot Lanjutan",
-    "description": "Mempelajari fitur-fitur lanjutan Spring Boot.",
-    "isFinished": true
+    "type": "EXPENSE",
+    "amount": 200000,
+    "description": "Bayar tagihan listrik",
+    "date": "2025-01-17T09:00:00"
 }
 ###
 
-# @name DeleteTodoById
-DELETE {{BaseUrl}}/todos/{{todoId}}
+# @name DeleteCashFlowById
+DELETE {{BaseUrl}}/cashflows/{{cashFlowId}}
 Authorization: {{bearerToken}}
+###
+
+## Test Invalid Data - Type
+## ---------------------------------
+
+# @name PostCashFlowInvalidType
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INVALID",
+    "amount": 50000,
+    "description": "Test invalid type",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+# @name PostCashFlowNullType
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": null,
+    "amount": 50000,
+    "description": "Test null type",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+# @name PostCashFlowEmptyType
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "",
+    "amount": 50000,
+    "description": "Test empty type",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+## Test Invalid Data - Amount
+## ---------------------------------
+
+# @name PostCashFlowNullAmount
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": null,
+    "description": "Test null amount",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+# @name PostCashFlowZeroAmount
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": 0,
+    "description": "Test zero amount",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+# @name PostCashFlowNegativeAmount
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": -10000,
+    "description": "Test negative amount",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+## Test Invalid Data - Description
+## ---------------------------------
+
+# @name PostCashFlowNullDescription
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": 50000,
+    "description": null,
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+# @name PostCashFlowEmptyDescription
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": 50000,
+    "description": "",
+    "date": "2025-01-15T10:00:00"
+}
+###
+
+## Test Invalid Data - Date
+## ---------------------------------
+
+# @name PostCashFlowNullDate
+POST {{BaseUrl}}/cashflows
+Authorization: {{bearerToken}}
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": 50000,
+    "description": "Test null date",
+    "date": null
+}
+###
+
+## Test Unauthenticated Access
+## ---------------------------------
+
+# @name GetAllCashFlowsNoAuth
+GET {{BaseUrl}}/cashflows
+###
+
+# @name PostCashFlowNoAuth
+POST {{BaseUrl}}/cashflows
+Content-Type: application/json
+
+{
+    "type": "INCOME",
+    "amount": 50000,
+    "description": "Test no auth",
+    "date": "2025-01-15T10:00:00"
+}
 ###
